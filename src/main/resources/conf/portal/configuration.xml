@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd" xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+  <component>
+    <key>org.exoplatform.services.security.Authenticator</key>
+    <type>org.exoplatform.authenticator.CustomAuthenticator</type>
+  </component>
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
+    <component-plugin>
+      <name>logging.new.membership.event.listener</name>
+      <set-method>addListenerPlugin</set-method>
+      <type>org.exoplatform.listener.MembershipListener</type>
+      <description>This listener will log whenever a membership is removed by API</description>
+    </component-plugin>
+  </external-component-plugins>
+</configuration>
