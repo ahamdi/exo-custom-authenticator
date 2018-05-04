@@ -4,15 +4,9 @@ import javax.security.auth.login.LoginException;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.organization.Group;
-import org.exoplatform.services.organization.MembershipType;
-import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.services.organization.User;
+import org.exoplatform.services.organization.*;
 import org.exoplatform.services.organization.auth.OrganizationAuthenticatorImpl;
-import org.exoplatform.services.security.Credential;
-import org.exoplatform.services.security.Identity;
-import org.exoplatform.services.security.PasswordEncrypter;
-import org.exoplatform.services.security.RolesExtractor;
+import org.exoplatform.services.security.*;
 
 /**
  * Created by eXo Platform SAS.
@@ -43,7 +37,19 @@ public class CustomAuthenticator extends OrganizationAuthenticatorImpl {
   public Identity createIdentity(String userId) throws Exception {
     Identity userIdentity = super.createIdentity(userId);
     if(userIdentity.getMemberships().isEmpty()){
+      LOG.warn("User " + userId + " has not any Membership, adding him to"+ PLATFORM_USERS +" .");
       addUserToPlatformUsers(userId);
+    } else {
+      for(MembershipEntry m : userIdentity.getMemberships()) {
+          boolean isMember = false;
+          if(PLATFORM_USERS.equalsIgnoreCase(m.getGroup())){
+              isMember = true;
+          }
+          if(!isMember){
+              LOG.warn("User " + userId + " was not found in the group " + PLATFORM_USERS + ".");
+              addUserToPlatformUsers(userId);
+          }
+      }
     }
     return super.createIdentity(userId);
   }
@@ -69,8 +75,6 @@ public class CustomAuthenticator extends OrganizationAuthenticatorImpl {
       orgService.getMembershipHandler().linkMembership(user, platformUsersGroup, memberType, true);
     } catch (Exception e) {
       LOG.error("Failed to add user " + userId + " to group " + PLATFORM_USERS + ".", e);
-      // don't rethrow login exception in case of failure.
-      // throw e;
     } finally {
       end(orgService);
     }
