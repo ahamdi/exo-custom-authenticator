@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.exoplatform.services</groupId>
-    <artifactId>login-module</artifactId>
+    <artifactId>exo-custom-authenticator</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
